@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BUCKSHOT ROULETTE</title>
+<style>
+:root{color-scheme:dark;--bg:#090909;--panel:#141414;--line:#333;--red:#ed3030;--blue:#4e8bff;--muted:#888}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#241010,var(--bg) 60%);color:#eee;font:16px 'Courier New',monospace;display:flex;justify-content:center;align-items:center;padding:20px}
+main{width:min(760px,100%)}h1{text-align:center;color:var(--red);letter-spacing:.18em;text-shadow:0 0 18px #f003;margin:0 0 24px}h2,h3{letter-spacing:.08em}button,input{font:inherit;color:inherit;background:#101010;border:1px solid var(--line);padding:10px 12px}button{cursor:pointer}button:hover:not(:disabled){border-color:var(--red);background:#211313}button:disabled{opacity:.35;cursor:not-allowed}input{width:100%}.row{display:flex;gap:8px;margin:8px 0}.row>*{flex:1}.screen{display:none}.screen.active{display:block}.panel{border:1px solid var(--line);background:#0b0b0be8;padding:16px;margin:12px 0}.muted{color:var(--muted);font-size:.85rem}.room{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #292929;padding:8px 0}.code{font-size:2.5rem;letter-spacing:.3em;color:var(--red);text-align:center;margin:20px}.players{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hp{display:flex;gap:5px;margin:10px 0}.pip{width:18px;height:18px;border:1px solid var(--red)}.pip.on{background:var(--red);box-shadow:0 0 8px #f004}.shells{text-align:center;line-height:2}.live{color:#ff4a4a}.blank{color:var(--blue)}.items{display:flex;flex-wrap:wrap;gap:8px}.items button{font-size:.9rem}.actions{display:flex;gap:12px;justify-content:center;margin:18px 0}.actions button{flex:1;padding:14px 8px}.status{text-align:center;padding:12px;border:1px solid var(--line);color:var(--muted)}.status.mine{color:#ff6262;border-color:var(--red)}#log{max-height:160px;overflow:auto;font-size:.83rem}.logline{padding:4px 0;border-bottom:1px solid #222}.overlay{display:none;position:fixed;inset:0;background:#000e;align-items:center;justify-content:center;text-align:center;padding:20px}.overlay.show{display:flex}.overlay .panel{width:min(420px,100%)}@media(max-width:520px){body{padding:12px}.players{gap:6px}.panel{padding:10px}.actions{gap:6px}.code{font-size:2rem}}
+</style>
+</head>
+<body><main>
+<section id="lobby" class="screen active">
+<h1>BUCKSHOT<br>ROULETTE</h1>
+<div class="panel"><label class="muted" for="name">닉네임</label><input id="name" maxlength="12" placeholder="익명">
+<div class="row"><button id="create">방 만들기</button></div>
+<hr style="border-color:#292929;margin:18px 0">
+<div class="row"><input id="room-code" maxlength="6" placeholder="방 코드" style="text-transform:uppercase"><button id="join">참가</button></div>
+<h3 class="muted">— 공개 방 —</h3><div id="rooms" class="muted">방 목록을 불러오는 중...</div></div>
+</section>
+<section id="waiting" class="screen">
+<h1>대기실</h1><div class="panel"><div class="muted" style="text-align:center">방 코드</div><div id="code" class="code">------</div><div id="waiting-players"></div><p class="muted" style="text-align:center">상대방이 참가하면 게임이 시작됩니다.</p><button id="leave">로비로</button></div>
+</section>
+<section id="game" class="screen">
+<h1>BUCKSHOT ROULETTE</h1><div class="status" id="status">게임 준비 중...</div>
+<div class="players">
+<div class="panel"><div id="me-name">나</div><div id="me-hp" class="hp"></div><div id="me-items-count" class="muted"></div></div>
+<div class="panel"><div id="op-name">상대</div><div id="op-hp" class="hp"></div><div id="op-items-count" class="muted"></div></div>
+</div>
+<div class="panel shells"><div>ROUND <span id="round">1</span></div><div><span class="live">● 실탄 <b id="live">?</b></span>　총 <b id="total">?</b>발　<span class="blank">○ 공탄 <b id="blank">?</b></span></div><canvas id="shell-view" width="320" height="28" style="max-width:100%"></canvas></div>
+<div class="panel"><h3 class="muted">— 내 아이템 —</h3><div id="items" class="items"></div></div>
+<div class="actions"><button id="shoot-op" disabled>상대에게 발사</button><button id="shoot-me" disabled>자신에게 발사</button></div>
+<div class="panel"><h3 class="muted">— 로그 —</h3><div id="log"></div></div>
+</section>
+</main>
+<div id="over" class="overlay"><div class="panel"><h1 id="over-title">GAME OVER</h1><p id="over-msg"></p><div class="row"><button id="rematch">재경기 요청</button><button id="back">로비로</button></div></div></div>
+<script src="/socket.io/socket.io.js"></script><script src="game.js"></script>
+</body></html>
